@@ -20,11 +20,11 @@ public class ReportChecker {
 			printMenu();
 			switch (sc.next()) {
 				case "1": // 1 — Считать месячные отчеты.
-					System.out.println("За какой год считать месячные отчеты?");
+					System.out.println("За какой год считать месячные отчеты? Год в формате YYYY.");
 					monthlyReports = readAllMonthsReports(fileReader, sc.nextInt());
 					break;
 				case "2": // 2 — Считать годовой отчет.
-					System.out.println("За какой год считать отчет?");
+					System.out.println("За какой год считать отчет? Год в формате YYYY.");
 					yearlyReport = readYearlyReport(fileReader, sc.nextInt());
 					break;
 				case "3": // 3 — Вывести информацию о месячных отчетах.
@@ -38,6 +38,7 @@ public class ReportChecker {
 					break;
 				case "0": // 0 — Выход из программы.
 					System.out.println();
+					sc.close();
 					return;
 				default:
 					System.out.println("Такой команды нет.");
@@ -105,11 +106,11 @@ public class ReportChecker {
 		return mostProfItem;
 	}
 
+	/*
+	Метод считывает все месячные отчеты из папки resources и добавляет их в список
+	с месячными отчетами.
+	 */
 	private static ArrayList<MonthlyReport> readAllMonthsReports(FileReader fileReader, int year) {
-        /*
-        Метод считывает все месячные отчеты из папки resources и добавляет их в список
-        с месячными отчетами.
-         */
 		ArrayList<MonthlyReport> monthlyReports = new ArrayList<>();
 		for (int i = 1; i <= 12; i++) {
 			String fileName = "";
@@ -129,10 +130,10 @@ public class ReportChecker {
 		return monthlyReports;
 	}
 
+	/*
+	Метод создает экземпляр MonthlyReport из списка строк CSV и номера месяца.
+	 */
 	private static MonthlyReport createMonthlyReport(ArrayList<String> file, int index) {
-        /*
-        Метод создает экземпляр MonthlyReport из списка строк CSV и номера месяца.
-         */
 		MonthlyReport monthlyReport = new MonthlyReport(index);
 		for (int i = 1; i < file.size(); i++) {
 			String line = file.get(i);
@@ -146,21 +147,21 @@ public class ReportChecker {
 		return monthlyReport;
 	}
 
+	/*
+	Метод создает экземпляр Item из splitLine -- разбитой по запятой строки из файла CSV
+	с месячным отчетом.
+	 */
 	private static Item createItem(String[] splitLine) {
-        /*
-        Метод создает экземпляр Item из splitLine -- разбитой по запятой строки из файла CSV.
-        с месячным отчетом.
-         */
 		String name = splitLine[0];
 		double price = Double.parseDouble(splitLine[3]);
 		int quantity = Integer.parseInt(splitLine[2]);
 		return new Item(name, price, quantity);
 	}
 
+	/*
+	Метод считывает годовой отчет из папки resources.
+	 */
 	private static YearlyReport readYearlyReport(FileReader fileReader, int index) {
-        /*
-        Метод считывает годовой отчет из папки resources.
-         */
 		String fileName = "y." + index + ".csv";
 		ArrayList<String> file = fileReader.readFileContents(fileName);
 		if (file.isEmpty())
@@ -172,10 +173,10 @@ public class ReportChecker {
 		return null;
 	}
 
+	/*
+	Метод создает экземпляр YearlyReport из списка строк CSV и номера года.
+	 */
 	public static YearlyReport createYearlyReport(ArrayList<String> file, int index) {
-		/*
-        Метод создает экземпляр YearlyReport из списка строк CSV и номера года.
-         */
 		YearlyReport yearlyReport = new YearlyReport(index);
 		for (int i = 1; i < file.size(); i++) {
 			String[] splitLine = file.get(i).split(",");
@@ -201,7 +202,7 @@ public class ReportChecker {
 		}
 		System.out.println("Сверка годового и месячных отчетов.");
 		boolean isCheckSuccessful = true;
-		HashMap<Integer, Double> incomesFromMR = new HashMap<>();
+		HashMap<Integer, Double> incomesMR = new HashMap<>();
 		HashMap<Integer, Double> expensesFromMR = new HashMap<>();
 		for (MonthlyReport monthlyReport : monthlyReports) {
 			double income = 0;
@@ -212,23 +213,23 @@ public class ReportChecker {
 			for (Item item : monthlyReport.getExpenses()) {
 				expense += item.getPrice() * item.getQuantity();
 			}
-			incomesFromMR.put(monthlyReport.getIndex(), income);
+			incomesMR.put(monthlyReport.getIndex(), income);
 			expensesFromMR.put(monthlyReport.getIndex(), expense);
 		}
-		HashMap<Integer, Double> incomesFromYR = yearlyReport.getIncomes();
-		HashMap<Integer, Double> expensesFromYR = yearlyReport.getExpenses();
-		for (Integer monthIndex : incomesFromYR.keySet()) {
-			if (!Objects.equals(incomesFromYR.get(monthIndex), incomesFromMR.get(monthIndex))) {
+		HashMap<Integer, Double> incomesYR = yearlyReport.getIncomes();
+		HashMap<Integer, Double> expensesYR = yearlyReport.getExpenses();
+		for (Integer monthIndex : incomesYR.keySet()) {
+			if (!Objects.equals(incomesYR.get(monthIndex), incomesMR.get(monthIndex))) {
 				System.out.print("Несоответствие суммы доходов в " + MONTHS.get(monthIndex) + ": ");
-				System.out.println("Доходы из годового отчета: " + incomesFromYR.get(monthIndex));
-				System.out.println("Доходы из месячного отчета: " + incomesFromMR.get(monthIndex));
+				System.out.println("Доходы из годового отчета: " + incomesYR.get(monthIndex));
+				System.out.println("Доходы из месячного отчета: " + incomesMR.get(monthIndex));
 				isCheckSuccessful = false;
 			}
 		}
-		for (Integer monthIndex : expensesFromYR.keySet()) {
-			if (!Objects.equals(expensesFromYR.get(monthIndex), expensesFromMR.get(monthIndex))) {
+		for (Integer monthIndex : expensesYR.keySet()) {
+			if (!Objects.equals(expensesYR.get(monthIndex), expensesFromMR.get(monthIndex))) {
 				System.out.print("Несоответствие суммы расходов в " + MONTHS.get(monthIndex) + ": ");
-				System.out.println("Расходы из годового отчета: " + expensesFromYR.get(monthIndex));
+				System.out.println("Расходы из годового отчета: " + expensesYR.get(monthIndex));
 				System.out.println("Расходы из месячного отчета: " + expensesFromMR.get(monthIndex));
 				isCheckSuccessful = false;
 			}
