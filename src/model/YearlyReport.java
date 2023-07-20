@@ -3,9 +3,9 @@ package model;
 import java.util.HashMap;
 
 public class YearlyReport {
-	private int index;
-	private HashMap<Integer, Double> incomes;
-	private HashMap<Integer, Double> expenses;
+	private final int index;
+	private final HashMap<Integer, Double> incomes;
+	private final HashMap<Integer, Double> expenses;
 
 	public YearlyReport(int index) {
 		this.index = index;
@@ -25,23 +25,11 @@ public class YearlyReport {
 		return index;
 	}
 
-	public void setIndex(int index) {
-		this.index = index;
-	}
-
 	public HashMap<Integer, Double> getIncomes() {
 		return incomes;
 	}
 
-	public void setIncomes(HashMap<Integer, Double> incomes) {
-		this.incomes = incomes;
-	}
-
 	public HashMap<Integer, Double> getExpenses() {
 		return expenses;
-	}
-
-	public void setExpenses(HashMap<Integer, Double> expenses) {
-		this.expenses = expenses;
 	}
 }
