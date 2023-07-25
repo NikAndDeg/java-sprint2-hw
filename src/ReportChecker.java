@@ -20,12 +20,12 @@ public class ReportChecker {
 			printMenu();
 			switch (sc.next()) {
 				case "1": // 1 — Считать месячные отчеты.
-					System.out.println("За какой год считать месячные отчеты? Год в формате YYYY.");
-					monthlyReports = readAllMonthsReports(fileReader, sc.nextInt());
+					//System.out.println("За какой год считать месячные отчеты? Год в формате YYYY.");
+					monthlyReports = readAllMonthsReports(fileReader, 2021);
 					break;
 				case "2": // 2 — Считать годовой отчет.
-					System.out.println("За какой год считать отчет? Год в формате YYYY.");
-					yearlyReport = readYearlyReport(fileReader, sc.nextInt());
+					//System.out.println("За какой год считать отчет? Год в формате YYYY.");
+					yearlyReport = readYearlyReport(fileReader, 2021);
 					break;
 				case "3": // 3 — Вывести информацию о месячных отчетах.
 					printMonthsReportsInfo(monthlyReports);
@@ -112,7 +112,8 @@ public class ReportChecker {
 	 */
 	private static ArrayList<MonthlyReport> readAllMonthsReports(FileReader fileReader, int year) {
 		ArrayList<MonthlyReport> monthlyReports = new ArrayList<>();
-		for (int i = 1; i <= 12; i++) {
+		//for (int i = 1; i <= 12; i++) {
+		for (int i = 1; i <= 3; i++) {
 			String fileName = "";
 			if (i < 10)
 				fileName = "m." + year + "0" + i + ".csv";
